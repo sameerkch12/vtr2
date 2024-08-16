@@ -34,20 +34,33 @@ app.post('/makeCall', (req, res) => {
 });
 
 app.post('/handleGather', (req, res) => {
-  const { Digits, From } = req.body;
-  const interviewLink = 'https://v.personaliz.ai/?id=9b697c1a&uid=fe141702f66c760d85ab&mode=test';
+  console.log('Received request at /handleGather');
+  console.log('Request Body:', req.body);
 
-  if (Digits === '1') {
-    res.send(`<Response>
-               <Say>Thank you for your interest. Here is your interview link: ${interviewLink}</Say>
-             </Response>`);
-  } else {
-    res.send(`<Response>
-               <Say>Invalid option. Please try again.</Say>
-               <Redirect>/</Redirect>
-             </Response>`);
+  try {
+    const { Digits, From } = req.body;
+    const interviewLink = 'https://v.personaliz.ai/?id=9b697c1a&uid=fe141702f66c760d85ab&mode=test';
+
+    if (Digits === '1') {
+      console.log('Option 1 selected');
+      res.send(`<Response>
+                 <Say>Thank you for your interest. Here is your interview link: ${interviewLink}</Say>
+               </Response>`);
+    } else {
+      console.log('Invalid option selected');
+      res.send(`<Response>
+                 <Say>Invalid option. Please try again.</Say>
+                 <Redirect>/</Redirect>
+               </Response>`);
+    }
+  } catch (error) {
+    console.error('Error handling gather request:', error);
+    res.status(500).send(`<Response>
+                           <Say>There was an error processing your request. Please try again later.</Say>
+                         </Response>`);
   }
 });
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
