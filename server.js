@@ -12,22 +12,24 @@ const client = new twilio(accountSid, authToken);
 
 const twilioNumber = process.env.TWILIO_NUMBER;
 const toNumber = '+918109543070'; // Fixed number for outgoing calls
+
 app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+  res.send('Hello World!');
+});
+
 app.post('/makeCall', (req, res) => {
-    console.log(accountSid,authToken,twilioNumber,toNumber);
+  console.log(accountSid, authToken, twilioNumber, toNumber);
   client.calls.create({
     to: toNumber,
     from: twilioNumber,
-    twiml: <Response>
+    twiml: `<Response>
              <Play>https://sa-5550.twil.io/audio.mp3</Play>
              <Gather action="https://vtr2.onrender.com/handleGather" method="POST">
              </Gather>
              <Say> not give any response </Say>
-           </Response>,
+           </Response>`,
   })
-  .then(call => res.send(Call initiated: ${call.sid}))
+  .then(call => res.send(`Call initiated: ${call.sid}`))
   .catch(err => res.status(500).send(err.message));
 });
 
@@ -36,18 +38,18 @@ app.post('/handleGather', (req, res) => {
   const interviewLink = 'https://v.personaliz.ai/?id=9b697c1a&uid=fe141702f66c760d85ab&mode=test';
 
   if (Digits === '1') {
-      res.send(<Response>
-                 <Say>Thank you for your interest. Here is your interview link: ${interviewLink}</Say>
-               </Response>);
+    res.send(`<Response>
+               <Say>Thank you for your interest. Here is your interview link: ${interviewLink}</Say>
+             </Response>`);
   } else {
-    res.send(<Response>
+    res.send(`<Response>
                <Say>Invalid option. Please try again.</Say>
                <Redirect>/</Redirect>
-             </Response>);
+             </Response>`);
   }
 });
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(Server running on port ${port});
+  console.log(`Server running on port ${port}`);
 });
