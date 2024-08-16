@@ -36,18 +36,9 @@ app.post('/handleGather', (req, res) => {
   const interviewLink = 'https://v.personaliz.ai/?id=9b697c1a&uid=fe141702f66c760d85ab&mode=test';
 
   if (Digits === '1') {
-    // Send the text message
-    client.messages.create({
-      body: `Thank you for your interest. Here is your interview link: ${interviewLink}`,
-      from: twilioNumber,
-      to: From
-    })
-    .then(() => {
       res.send(`<Response>
                  <Say>Thank you for your interest. Here is your interview link: ${interviewLink}</Say>
                </Response>`);
-    })
-    .catch(err => res.status(500).send(err.message));
   } else {
     res.send(`<Response>
                <Say>Invalid option. Please try again.</Say>
