@@ -11,14 +11,16 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 const client = new twilio(accountSid, authToken);
 
 const twilioNumber = process.env.TWILIO_NUMBER;
-const toNumber = '+918109543070'; // Fixed number for outgoing calls
+
 app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+  res.send('Hello World!');
+});
+
 app.post('/makeCall', (req, res) => {
-    console.log(accountSid,authToken,twilioNumber,toNumber);
+  const userPhoneNumber = req.body.userPhoneNumber; // Capture the user's phone number
+
   client.calls.create({
-    to: toNumber,
+    to: userPhoneNumber,
     from: twilioNumber,
     twiml: `<Response>
              <Play>https://sa-5550.twil.io/audio.mp3</Play>
@@ -36,9 +38,21 @@ app.post('/handleGather', (req, res) => {
   const interviewLink = 'https://v.personaliz.ai/?id=9b697c1a&uid=fe141702f66c760d85ab&mode=test';
 
   if (Digits === '1') {
+    client.messages.create({
+      body: `Thank you for your interest. Here is your interview link: ${interviewLink}`,
+      from: twilioNumber, // Your Twilio number
+      to: From, // The user's phone number
+    })
+    .then(message => {
+      console.log(`Message sent: ${message.sid}`);
       res.send(`<Response>
-                 <Say>Thank you for your interest. Here is your interview link: ${interviewLink}</Say>
+                 <Say>Your interview link has been sent to your mobile phone.</Say>
                </Response>`);
+    })
+    .catch(err => {
+      console.error(err.message);
+      res.status(500).send('Error sending SMS');
+    });
   } else {
     res.send(`<Response>
                <Say>Invalid option. Please try again.</Say>
